@@ -20,7 +20,7 @@
             margin: 0;
         }
         </style>
-         <title>Obras Públicas</title>
+        <title>Obras Públicas</title>
          <!-- Icono -->
          <link rel="icon" href="./images/favicon1.ico">
     </head>
@@ -40,12 +40,16 @@
         <script src="js/leaflet-control-geocoder.Geocoder.js"></script>
         <script src="js/leaflet-measure.js"></script>
         <script src="data/LmiteDepartamental_2.js"></script>
-        <script src="data/ObrasPblicasProyectadas_3.js"></script>
-        <script src="data/ObrasPblicasenEjecucin2025_4.js"></script>
+        <script src="data/ObrasPublicas_3.js"></script>
         <script>
-         var map = L.map('map', {
-            zoomControl:false, maxZoom:28, minZoom:12
-        }).fitBounds([[-32.9510825109687,-68.89473686793083],[-32.905500208386265,-68.80059476154479]]);
+        var highlightLayer;
+        function highlightFeature(e) {
+            highlightLayer = e.target;
+            highlightLayer.openPopup();
+        }
+        var map = L.map('map', {
+            zoomControl:false, maxZoom:28, minZoom:14
+        }).fitBounds([[-32.94802794101208,-68.89465026501975],[-32.90957247280707,-68.81522051912425]]);
         var hash = new L.Hash(map);
         map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
         var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
@@ -99,7 +103,7 @@
             pane: 'pane_OpenStreetMap_0',
             opacity: 1.0,
             attribution: '',
-            minZoom: 12,
+            minZoom: 14,
             maxZoom: 28,
             minNativeZoom: 0,
             maxNativeZoom: 19
@@ -112,13 +116,25 @@
             pane: 'pane_GoogleSatelital_1',
             opacity: 1.0,
             attribution: '',
-            minZoom: 12,
+            minZoom: 14,
             maxZoom: 28,
             minNativeZoom: 0,
             maxNativeZoom: 18
         });
         layer_GoogleSatelital_1;
         function pop_LmiteDepartamental_2(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
             var popupContent = '<table>\
                 </table>';
             var content = removeEmptyRowsFromPopupContent(popupContent, feature);
@@ -155,10 +171,28 @@
         });
         bounds_group.addLayer(layer_LmiteDepartamental_2);
         map.addLayer(layer_LmiteDepartamental_2);
-        function pop_ObrasPblicasProyectadas_3(feature, layer) {
+        function pop_ObrasPublicas_3(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
             var popupContent = '<table>\
                     <tr>\
                         <td class="visible-with-data" id="Nombre" colspan="2"><strong>Nombre</strong><br />' + (feature.properties['Nombre'] !== null ? autolinker.link(String(feature.properties['Nombre']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td class="visible-with-data" id="Estado" colspan="2"><strong>Estado</strong><br />' + (feature.properties['Estado'] !== null ? autolinker.link(String(feature.properties['Estado']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td class="visible-with-data" id="Eje" colspan="2"><strong>Eje</strong><br />' + (feature.properties['Eje'] !== null ? autolinker.link(String(feature.properties['Eje']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
                         <td class="visible-with-data" id="Expediente" colspan="2"><strong>Expediente</strong><br />' + (feature.properties['Expediente'] !== null ? autolinker.link(String(feature.properties['Expediente']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
@@ -167,7 +201,10 @@
                         <td class="visible-with-data" id="Plazo Obra" colspan="2"><strong>Plazo Obra</strong><br />' + (feature.properties['Plazo Obra'] !== null ? autolinker.link(String(feature.properties['Plazo Obra']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <td class="visible-with-data" id="Estado" colspan="2"><strong>Estado</strong><br />' + (feature.properties['Estado'] !== null ? autolinker.link(String(feature.properties['Estado']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                        <td class="visible-with-data" id="Detalle" colspan="2"><strong>Detalle</strong><br />' + (feature.properties['Detalle'] !== null ? autolinker.link(String(feature.properties['Detalle']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td class="visible-with-data" id="Monto" colspan="2"><strong>Monto</strong><br />' + (feature.properties['Monto'] !== null ? autolinker.link(String(feature.properties['Monto']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
                     </tr>\
                 </table>';
             var content = removeEmptyRowsFromPopupContent(popupContent, feature);
@@ -177,62 +214,11 @@
 			layer.bindPopup(content, { maxHeight: 400 });
         }
 
-        function style_ObrasPblicasProyectadas_3_0() {
-            return {
-                pane: 'pane_ObrasPblicasProyectadas_3',
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1.0, 
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(178,106,42,1.0)',
-                interactive: true,
-            }
-        }
-        map.createPane('pane_ObrasPblicasProyectadas_3');
-        map.getPane('pane_ObrasPblicasProyectadas_3').style.zIndex = 403;
-        map.getPane('pane_ObrasPblicasProyectadas_3').style['mix-blend-mode'] = 'normal';
-        var layer_ObrasPblicasProyectadas_3 = new L.geoJson(json_ObrasPblicasProyectadas_3, {
-            attribution: '',
-            interactive: true,
-            dataVar: 'json_ObrasPblicasProyectadas_3',
-            layerName: 'layer_ObrasPblicasProyectadas_3',
-            pane: 'pane_ObrasPblicasProyectadas_3',
-            onEachFeature: pop_ObrasPblicasProyectadas_3,
-            style: style_ObrasPblicasProyectadas_3_0,
-        });
-        bounds_group.addLayer(layer_ObrasPblicasProyectadas_3);
-        map.addLayer(layer_ObrasPblicasProyectadas_3);
-        function pop_ObrasPblicasenEjecucin2025_4(feature, layer) {
-            var popupContent = '<table>\
-                    <tr>\
-                        <td colspan="2"><strong>Nombre</strong><br />' + (feature.properties['Nombre'] !== null ? autolinker.link(String(feature.properties['Nombre']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2"><strong>Estado</strong><br />' + (feature.properties['Estado'] !== null ? autolinker.link(String(feature.properties['Estado']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2"><strong>Plazo</strong><br />' + (feature.properties['Plazo'] !== null ? autolinker.link(String(feature.properties['Plazo']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2"><strong>Finalizar</strong><br />' + (feature.properties['Finalizar'] !== null ? autolinker.link(String(feature.properties['Finalizar']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                </table>';
-            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
-			layer.on('popupopen', function(e) {
-				addClassToPopupIfMedia(content, e.popup);
-			});
-			layer.bindPopup(content, { maxHeight: 400 });
-        }
-
-        function style_ObrasPblicasenEjecucin2025_4_0(feature) {
+        function style_ObrasPublicas_3_0(feature) {
             switch(String(feature.properties['Estado'])) {
                 case 'Ejecución':
                     return {
-                pane: 'pane_ObrasPblicasenEjecucin2025_4',
+                pane: 'pane_ObrasPublicas_3',
                 opacity: 1,
                 color: 'rgba(35,35,35,1.0)',
                 dashArray: '',
@@ -241,13 +227,13 @@
                 weight: 1.0, 
                 fill: true,
                 fillOpacity: 1,
-                fillColor: 'rgba(255,213,50,1.0)',
+                fillColor: 'rgba(255,203,26,1.0)',
                 interactive: true,
             }
                     break;
                 case 'Finalizada':
                     return {
-                pane: 'pane_ObrasPblicasenEjecucin2025_4',
+                pane: 'pane_ObrasPublicas_3',
                 opacity: 1,
                 color: 'rgba(35,35,35,1.0)',
                 dashArray: '',
@@ -256,26 +242,41 @@
                 weight: 1.0, 
                 fill: true,
                 fillOpacity: 1,
-                fillColor: 'rgba(63,218,84,1.0)',
+                fillColor: 'rgba(0,181,37,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Proyectada':
+                    return {
+                pane: 'pane_ObrasPublicas_3',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(183,98,18,1.0)',
                 interactive: true,
             }
                     break;
             }
         }
-        map.createPane('pane_ObrasPblicasenEjecucin2025_4');
-        map.getPane('pane_ObrasPblicasenEjecucin2025_4').style.zIndex = 404;
-        map.getPane('pane_ObrasPblicasenEjecucin2025_4').style['mix-blend-mode'] = 'normal';
-        var layer_ObrasPblicasenEjecucin2025_4 = new L.geoJson(json_ObrasPblicasenEjecucin2025_4, {
+        map.createPane('pane_ObrasPublicas_3');
+        map.getPane('pane_ObrasPublicas_3').style.zIndex = 403;
+        map.getPane('pane_ObrasPublicas_3').style['mix-blend-mode'] = 'normal';
+        var layer_ObrasPublicas_3 = new L.geoJson(json_ObrasPublicas_3, {
             attribution: '',
             interactive: true,
-            dataVar: 'json_ObrasPblicasenEjecucin2025_4',
-            layerName: 'layer_ObrasPblicasenEjecucin2025_4',
-            pane: 'pane_ObrasPblicasenEjecucin2025_4',
-            onEachFeature: pop_ObrasPblicasenEjecucin2025_4,
-            style: style_ObrasPblicasenEjecucin2025_4_0,
+            dataVar: 'json_ObrasPublicas_3',
+            layerName: 'layer_ObrasPublicas_3',
+            pane: 'pane_ObrasPublicas_3',
+            onEachFeature: pop_ObrasPublicas_3,
+            style: style_ObrasPublicas_3_0,
         });
-        bounds_group.addLayer(layer_ObrasPblicasenEjecucin2025_4);
-        map.addLayer(layer_ObrasPblicasenEjecucin2025_4);
+        bounds_group.addLayer(layer_ObrasPublicas_3);
+        map.addLayer(layer_ObrasPublicas_3);
         var osmGeocoder = new L.Control.Geocoder({
             collapsed: true,
             position: 'topleft',
@@ -287,8 +288,7 @@
         document.getElementsByClassName('leaflet-control-geocoder-icon')[0]
         .title += 'Search for a place';
         var overlaysTree = [
-            {label: 'Obras Públicas en Ejecución 2025<br /><table><tr><td style="text-align: center;"><img src="legend/ObrasPblicasenEjecucin2025_4_Ejecución0.png" /></td><td>Ejecución</td></tr><tr><td style="text-align: center;"><img src="legend/ObrasPblicasenEjecucin2025_4_Finalizada1.png" /></td><td>Finalizada</td></tr></table>', layer: layer_ObrasPblicasenEjecucin2025_4},
-            {label: '<img src="legend/ObrasPblicasProyectadas_3.png" /> Obras Públicas Proyectadas', layer: layer_ObrasPblicasProyectadas_3},
+            {label: 'Obras Publicas<br /><table><tr><td style="text-align: center;"><img src="legend/ObrasPublicas_3_Ejecución0.png" /></td><td>Ejecución</td></tr><tr><td style="text-align: center;"><img src="legend/ObrasPublicas_3_Finalizada1.png" /></td><td>Finalizada</td></tr><tr><td style="text-align: center;"><img src="legend/ObrasPublicas_3_Proyectada2.png" /></td><td>Proyectada</td></tr></table>', layer: layer_ObrasPublicas_3},
             {label: '<img src="legend/LmiteDepartamental_2.png" /> Límite Departamental', layer: layer_LmiteDepartamental_2},
             {label: "Google Satelital", layer: layer_GoogleSatelital_1},
             {label: "OpenStreetMap", layer: layer_OpenStreetMap_0},]
@@ -303,15 +303,28 @@
         });
         lay.addTo(map);
         setBounds();
-        resetLabels([layer_ObrasPblicasenEjecucin2025_4]);
+        var i = 0;
+        layer_ObrasPublicas_3.eachLayer(function(layer) {
+            var context = {
+                feature: layer.feature,
+                variables: {}
+            };
+            layer.bindTooltip((layer.feature.properties['id'] !== null?String('<div style="color: #323232; font-size: 10pt; font-family: \'Arial Black\', sans-serif;">' + layer.feature.properties['id']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_ObrasPublicas_3'});
+            labels.push(layer);
+            totalMarkers += 1;
+              layer.added = true;
+              addLabel(layer, i);
+              i++;
+        });
+        resetLabels([layer_ObrasPublicas_3]);
         map.on("zoomend", function(){
-            resetLabels([layer_ObrasPblicasenEjecucin2025_4]);
+            resetLabels([layer_ObrasPublicas_3]);
         });
         map.on("layeradd", function(){
-            resetLabels([layer_ObrasPblicasenEjecucin2025_4]);
+            resetLabels([layer_ObrasPublicas_3]);
         });
         map.on("layerremove", function(){
-            resetLabels([layer_ObrasPblicasenEjecucin2025_4]);
+            resetLabels([layer_ObrasPublicas_3]);
         });
         </script>
     </body>
