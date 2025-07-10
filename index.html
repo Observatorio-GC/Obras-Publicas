@@ -10,7 +10,7 @@
         <link rel="stylesheet" href="css/L.Control.Layers.Tree.css">
         <link rel="stylesheet" href="css/qgis2web.css">
         <link rel="stylesheet" href="css/fontawesome-all.min.css">
-        <link rel="stylesheet" href="css/leaflet-control-geocoder.Geocoder.css">
+        <link rel="stylesheet" href="css/leaflet.photon.css">
         <link rel="stylesheet" href="css/leaflet-measure.css">
         <style>
         html, body, #map {
@@ -37,19 +37,14 @@
         <script src="js/rbush.min.js"></script>
         <script src="js/labelgun.min.js"></script>
         <script src="js/labels.js"></script>
-        <script src="js/leaflet-control-geocoder.Geocoder.js"></script>
+        <script src="js/leaflet.photon.js"></script>
         <script src="js/leaflet-measure.js"></script>
         <script src="data/LmiteDepartamental_2.js"></script>
         <script src="data/ObrasPublicas_3.js"></script>
         <script>
-        var highlightLayer;
-        function highlightFeature(e) {
-            highlightLayer = e.target;
-            highlightLayer.openPopup();
-        }
         var map = L.map('map', {
             zoomControl:false, maxZoom:28, minZoom:14
-        }).fitBounds([[-32.94802794101208,-68.89465026501975],[-32.90957247280707,-68.81522051912425]]);
+        }).fitBounds([[-32.96738035856546,-68.93003937826883],[-32.890464029381626,-68.77117595258241]]);
         var hash = new L.Hash(map);
         map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
         var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
@@ -123,18 +118,6 @@
         });
         layer_GoogleSatelital_1;
         function pop_LmiteDepartamental_2(feature, layer) {
-            layer.on({
-                mouseout: function(e) {
-                    if (typeof layer.closePopup == 'function') {
-                        layer.closePopup();
-                    } else {
-                        layer.eachLayer(function(feature){
-                            feature.closePopup()
-                        });
-                    }
-                },
-                mouseover: highlightFeature,
-            });
             var popupContent = '<table>\
                 </table>';
             var content = removeEmptyRowsFromPopupContent(popupContent, feature);
@@ -172,18 +155,6 @@
         bounds_group.addLayer(layer_LmiteDepartamental_2);
         map.addLayer(layer_LmiteDepartamental_2);
         function pop_ObrasPublicas_3(feature, layer) {
-            layer.on({
-                mouseout: function(e) {
-                    if (typeof layer.closePopup == 'function') {
-                        layer.closePopup();
-                    } else {
-                        layer.eachLayer(function(feature){
-                            feature.closePopup()
-                        });
-                    }
-                },
-                mouseover: highlightFeature,
-            });
             var popupContent = '<table>\
                     <tr>\
                         <td class="visible-with-data" id="Nombre" colspan="2"><strong>Nombre</strong><br />' + (feature.properties['Nombre'] !== null ? autolinker.link(String(feature.properties['Nombre']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
@@ -277,16 +248,6 @@
         });
         bounds_group.addLayer(layer_ObrasPublicas_3);
         map.addLayer(layer_ObrasPublicas_3);
-        var osmGeocoder = new L.Control.Geocoder({
-            collapsed: true,
-            position: 'topleft',
-            text: 'Search',
-            title: 'Testing'
-        }).addTo(map);
-        document.getElementsByClassName('leaflet-control-geocoder-icon')[0]
-        .className += ' fa fa-search';
-        document.getElementsByClassName('leaflet-control-geocoder-icon')[0]
-        .title += 'Search for a place';
         var overlaysTree = [
             {label: 'Obras Publicas<br /><table><tr><td style="text-align: center;"><img src="legend/ObrasPublicas_3_Ejecución0.png" /></td><td>Ejecución</td></tr><tr><td style="text-align: center;"><img src="legend/ObrasPublicas_3_Finalizada1.png" /></td><td>Finalizada</td></tr><tr><td style="text-align: center;"><img src="legend/ObrasPublicas_3_Proyectada2.png" /></td><td>Proyectada</td></tr></table>', layer: layer_ObrasPublicas_3},
             {label: '<img src="legend/LmiteDepartamental_2.png" /> Límite Departamental', layer: layer_LmiteDepartamental_2},
